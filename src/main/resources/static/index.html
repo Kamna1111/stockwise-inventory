@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7fa">
+  <title>Stockwise · Inventory workspace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Main navigation">
+      <a class="brand" href="/" aria-label="Stockwise home">
+        <span class="brand-mark"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 14.5 16 5l12 9.5v12a1.5 1.5 0 0 1-1.5 1.5h-21A1.5 1.5 0 0 1 4 26.5z"/><path d="M11 28V17h10v11M8 14h16"/></svg></span>
+        <span class="brand-copy"><strong>stockwise</strong><small>INVENTORY WORKSPACE</small></span>
+      </a>
+      <div class="workspace-label">WORKSPACE</div>
+      <nav class="nav-list">
+        <button class="nav-item is-active" data-view="overview"><span class="nav-icon">◫</span> Overview</button>
+        <button class="nav-item" data-view="inventory"><span class="nav-icon">▤</span> Inventory <span class="nav-count" id="nav-count">0</span></button>
+        <button class="nav-item" data-view="restock"><span class="nav-icon">↗</span> Restock queue <span class="nav-dot" id="restock-dot"></span></button>
+        <button class="nav-item" data-view="activity"><span class="nav-icon">◷</span> Activity</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="assistant-promo">
+          <span class="sparkle">✳</span>
+          <strong>Inventory insights</strong>
+          <p>Ask your assistant about stock, trends, and items to replenish.</p>
+          <button class="button button-dark button-small" id="open-assistant">Ask assistant <span>↗</span></button>
+        </div>
+        <div class="user-card"><span class="avatar">IW</span><span><strong>Inventory workspace</strong><small>Local demo</small></span><span class="more">···</span></div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div class="breadcrumb"><span>Workspace</span><span class="crumb-sep">/</span><strong id="crumb-current">Overview</strong></div>
+        <div class="topbar-actions"><span class="connection"><i></i> API connected</span><button class="icon-button" id="refresh-button" aria-label="Refresh inventory" title="Refresh">⟳</button><span class="avatar avatar-small">IW</span></div>
+      </header>
+
+      <div class="page-wrap">
+        <section class="page-heading">
+          <div><div class="eyebrow"><span class="live-dot"></span> YOUR STORE · LIVE INVENTORY</div><h1 id="page-title">Good afternoon</h1><p id="page-subtitle">Here’s what’s happening across your inventory today.</p></div>
+          <button class="button button-primary" id="add-product-button"><span class="button-plus">＋</span> Add product</button>
+        </section>
+
+        <div class="notice error-notice" id="error-notice" role="alert" hidden></div>
+
+        <section class="metric-grid" aria-label="Inventory summary">
+          <article class="metric-card"><div class="metric-top"><span>Total products</span><span class="metric-icon icon-blue">▤</span></div><div class="metric-value" id="metric-products">—</div><div class="metric-foot"><span class="metric-caption">Unique items in catalog</span><span class="trend neutral">↗ SKU</span></div></article>
+          <article class="metric-card"><div class="metric-top"><span>Units in stock</span><span class="metric-icon icon-purple">▦</span></div><div class="metric-value" id="metric-units">—</div><div class="metric-foot"><span class="metric-caption">Across all products</span><span class="trend positive">● Live</span></div></article>
+          <article class="metric-card"><div class="metric-top"><span>Needs attention</span><span class="metric-icon icon-amber">⌁</span></div><div class="metric-value" id="metric-low">—</div><div class="metric-foot"><span class="metric-caption">At or below reorder point</span><span class="trend warning" id="metric-low-label">Review queue</span></div></article>
+          <article class="metric-card"><div class="metric-top"><span>Stock value</span><span class="metric-icon icon-green">＄</span></div><div class="metric-value" id="metric-value">—</div><div class="metric-foot"><span class="metric-caption">Retail value on hand</span><span class="trend positive">● Estimated</span></div></article>
+        </section>
+
+        <section class="content-card inventory-card" id="inventory-panel">
+          <div class="card-heading"><div><h2 id="list-heading">Inventory</h2><p id="list-description">Manage your products, quantities, and locations.</p></div><div class="card-tools"><button class="button button-outline" id="export-button"><span>↓</span> Export CSV</button></div></div>
+          <div class="table-toolbar"><label class="search-box"><span aria-hidden="true">⌕</span><input id="search-input" type="search" placeholder="Search product, SKU, or location" aria-label="Search inventory"></label><label class="filter-select"><span>Category</span><select id="category-filter" aria-label="Filter by category"><option value="all">All categories</option></select></label><button class="button button-outline filter-button" id="low-filter-button">⚑ <span>Low stock</span></button></div>
+          <div class="table-scroll"><table><thead><tr><th>PRODUCT</th><th>SKU</th><th>CATEGORY</th><th>LOCATION</th><th>UNIT PRICE</th><th>ON HAND</th><th>STATUS</th><th><span class="sr-only">Actions</span></th></tr></thead><tbody id="product-rows"><tr><td class="empty-cell" colspan="8"><span class="loader"></span> Loading inventory…</td></tr></tbody></table></div>
+          <div class="table-footer"><span id="table-count">Loading products…</span><span>Inventory syncs automatically <i class="live-dot"></i></span></div>
+        </section>
+
+        <section class="content-card activity-card" id="activity-panel" hidden>
+          <div class="card-heading"><div><h2>Recent activity</h2><p>Stock movements recorded in your inventory.</p></div></div>
+          <div id="activity-list" class="activity-list"></div>
+        </section>
+
+        <footer class="page-footer"><span>Stockwise Inventory · Portfolio demo</span><span>Built with Spring Boot <b>·</b> PostgreSQL <b>·</b> Java</span></footer>
+      </div>
+    </main>
+  </div>
+
+  <dialog class="modal" id="product-modal" aria-labelledby="product-modal-title">
+    <form id="product-form" class="modal-form">
+      <div class="modal-heading"><div><span class="eyebrow">INVENTORY ITEM</span><h2 id="product-modal-title">Add a product</h2><p>Add product details to your catalog.</p></div><button type="button" class="icon-button close-modal" aria-label="Close">×</button></div>
+      <input type="hidden" id="product-id">
+      <div class="form-grid"><label class="field field-wide">Product name<input required maxlength="120" id="field-name" placeholder="e.g. Wireless headphones"></label><label class="field">SKU<input required maxlength="40" id="field-sku" placeholder="e.g. AUD-2048"></label><label class="field">Category<select id="field-category"><option>Electronics</option><option>Home & Kitchen</option><option>Apparel</option><option>Grocery</option><option>Other</option></select></label><label class="field">Unit price<input required min="0" step="0.01" type="number" id="field-price" placeholder="0.00"></label><label class="field">Units on hand<input required min="0" step="1" type="number" id="field-quantity" placeholder="0"></label><label class="field">Reorder point<input required min="0" step="1" type="number" id="field-reorder" value="10"></label><label class="field">Storage location<input maxlength="100" id="field-location" placeholder="Aisle 04 · Bay B"></label></div>
+      <div class="form-error" id="form-error" role="alert" hidden></div><div class="modal-actions"><button type="button" class="button button-outline close-modal">Cancel</button><button class="button button-primary" type="submit" id="save-product-button">Save product</button></div>
+    </form>
+  </dialog>
+
+  <dialog class="modal modal-narrow" id="stock-modal" aria-labelledby="stock-modal-title">
+    <form id="stock-form" class="modal-form"><div class="modal-heading"><div><span class="eyebrow">INVENTORY ADJUSTMENT</span><h2 id="stock-modal-title">Change stock</h2><p id="stock-product-label"></p></div><button type="button" class="icon-button close-modal" aria-label="Close">×</button></div><input type="hidden" id="stock-product-id"><label class="field">Quantity change<input required type="number" step="1" id="field-stock-change" placeholder="Example: 12 to add, -3 to remove"><small>Use a positive number to add stock or a negative number to remove it.</small></label><label class="field">Reason<input maxlength="200" id="field-stock-reason" placeholder="e.g. Received shipment"></label><div class="form-error" id="stock-error" role="alert" hidden></div><div class="modal-actions"><button type="button" class="button button-outline close-modal">Cancel</button><button class="button button-primary" type="submit">Save adjustment</button></div></form>
+  </dialog>
+
+  <dialog class="assistant-drawer" id="assistant-modal" aria-labelledby="assistant-title">
+    <div class="assistant-heading"><div class="assistant-avatar">✳</div><div><span class="eyebrow">STOCKWISE AI</span><h2 id="assistant-title">Inventory assistant</h2><p>Answers based on your current inventory.</p></div><button type="button" class="icon-button close-modal" aria-label="Close">×</button></div>
+    <div class="assistant-thread" id="assistant-thread"><div class="chat-message assistant-message"><span class="chat-icon">✳</span><p>Hi! Ask me about products, current stock, or what needs replenishing.</p></div></div>
+    <form class="assistant-compose" id="assistant-form"><textarea id="assistant-question" maxlength="1000" rows="2" placeholder="Ask about your inventory…" aria-label="Ask inventory assistant"></textarea><button class="button button-primary send-button" type="submit" aria-label="Send question">↑</button></form><p class="assistant-footnote">AI answers can be incorrect. Verify important inventory decisions.</p>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
