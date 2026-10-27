@@ -89,7 +89,13 @@
 
   <dialog class="assistant-drawer" id="assistant-modal" aria-labelledby="assistant-title">
     <div class="assistant-heading"><div class="assistant-avatar">✳</div><div><span class="eyebrow">STOCKWISE AI</span><h2 id="assistant-title">Inventory assistant</h2><p>Answers based on your current inventory.</p></div><button type="button" class="icon-button close-modal" aria-label="Close">×</button></div>
-    <div class="assistant-thread" id="assistant-thread"><div class="chat-message assistant-message"><span class="chat-icon">✳</span><p>Hi! Ask me about products, current stock, or what needs replenishing.</p></div></div>
+    <div class="assistant-thread" id="assistant-thread"><div class="chat-message assistant-message"><span class="chat-icon">✳</span><p>Hi! I use your current inventory to answer questions. Try a prompt below.</p></div>
+      <div class="assistant-prompts" aria-label="Suggested questions">
+        <button type="button" class="assistant-prompt">What needs restocking? Include suggested quantities.</button>
+        <button type="button" class="assistant-prompt">Which products have the least stock?</button>
+        <button type="button" class="assistant-prompt">Summarize inventory by category.</button>
+      </div>
+    </div>
     <form class="assistant-compose" id="assistant-form"><textarea id="assistant-question" maxlength="1000" rows="2" placeholder="Ask about your inventory…" aria-label="Ask inventory assistant"></textarea><button class="button button-primary send-button" type="submit" aria-label="Send question">↑</button></form><p class="assistant-footnote">AI answers can be incorrect. Verify important inventory decisions.</p>
   </dialog>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>

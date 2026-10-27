@@ -111,7 +111,7 @@ The restock endpoint uses Java’s `PriorityQueue` as a min-heap: products at or
 
 ## Optional LLM assistant
 
-Set `LLM_API_KEY` in the IntelliJ run configuration to enable the assistant. Optional settings are `LLM_MODEL` and `LLM_API_URL`; the defaults target an OpenAI-compatible chat-completions endpoint. Without a key, the rest of the inventory app still works and the assistant explains that it is not configured. The assistant receives up to 200 current products, is instructed to answer only from that snapshot, and cannot update inventory.
+Set `LLM_API_KEY` in the IntelliJ run configuration to enable the assistant. Optional settings are `LLM_MODEL` and `LLM_API_URL`; the defaults target an OpenAI-compatible chat-completions endpoint. Without a key, the rest of the inventory app still works and the assistant explains that it is not configured. The assistant receives up to 200 current products, including category, location, quantity, reorder point, price, and a server-calculated reorder flag. Suggested order quantities use a clearly identified demo heuristic (twice the reorder point minus current stock); these are planning suggestions, not purchase orders. The assistant is instructed to cite SKU and current stock values, avoid claims about unavailable sales or supplier data, and cannot update inventory. The UI includes sample prompts for restocking, low-stock ranking, and category summaries.
 
 ## Tests
 
@@ -119,6 +119,7 @@ Run `./mvnw verify` on macOS/Linux or `mvnw.cmd verify` on Windows. The test pro
 
 - `InventoryApiApplicationTests` checks CRUD, validation, duplicate SKUs, stock history, negative-stock protection, restock ordering, the dashboard page, and assistant behavior without a key.
 - `ProductServiceTests` checks service rules with JUnit 5 and Mockito, including duplicate SKUs, stock boundaries, history recording, and priority ordering.
+- `InventoryAssistantServiceTests` checks grounded inventory context, empty snapshots, and deterministic suggested order quantities. The suite also verifies the app reports an unconfigured LLM key cleanly without making an external provider call.
 
 ## GitHub portfolio setup
 

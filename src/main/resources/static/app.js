@@ -264,6 +264,10 @@ $('#export-button').addEventListener('click', exportCsv);
 $('#refresh-button').addEventListener('click', loadData);
 $('#open-assistant').addEventListener('click', () => $('#assistant-modal').showModal());
 $('#assistant-form').addEventListener('submit', askAssistant);
+document.querySelectorAll('.assistant-prompt').forEach(button => button.addEventListener('click', () => {
+  $('#assistant-question').value = button.textContent.trim();
+  $('#assistant-form').requestSubmit();
+}));
 document.querySelectorAll('.close-modal').forEach(button => button.addEventListener('click', () => button.closest('dialog').close()));
 document.querySelectorAll('dialog.modal').forEach(dialog => dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close(); }));
 $('#assistant-modal').addEventListener('click', event => { if (event.target === $('#assistant-modal')) $('#assistant-modal').close(); });
