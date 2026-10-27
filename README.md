@@ -28,7 +28,7 @@ flowchart LR
     Assistant -->|Current inventory snapshot| LLM[Optional LLM provider]
 ```
 
-The dashboard is served by Spring Boot, so the browser interface and API use the same local server. Product data is stored in PostgreSQL. On a fresh database, the demo loader adds eight sample products; it does not add them again once the catalog has data. Set `DEMO_DATA_ENABLED=false` to turn that behavior off.
+The dashboard is served by Spring Boot, so the browser interface and API use the same local server. Product data is stored in PostgreSQL. To seed eight fictional sample products into an empty database for a portfolio demo, set `DEMO_DATA_ENABLED=true`. This is off by default, and the loader never adds samples to a catalog that already contains products.
 
 ## Run locally
 
@@ -46,6 +46,7 @@ Create a PostgreSQL database, for example `inventorydb`. In IntelliJ, open **Run
 DATABASE_URL=jdbc:postgresql://localhost:5432/inventorydb
 DATABASE_USERNAME=your_postgres_username
 DATABASE_PASSWORD=your_postgres_password
+DEMO_DATA_ENABLED=true
 ```
 
 Never paste a real password or LLM key into `application.properties` or commit it. `application.properties` uses environment variables, and `.gitignore` excludes local `.env` files.
@@ -58,6 +59,7 @@ You can also run from the project folder in a terminal:
 export DATABASE_URL=jdbc:postgresql://localhost:5432/inventorydb
 export DATABASE_USERNAME=your_postgres_username
 export DATABASE_PASSWORD=your_postgres_password
+export DEMO_DATA_ENABLED=true
 ./mvnw spring-boot:run
 ```
 
